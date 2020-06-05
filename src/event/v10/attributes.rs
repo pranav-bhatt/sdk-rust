@@ -37,13 +37,15 @@ impl<'a> IntoIterator for &'a Attributes {
         AttributesIntoIterator {
             attributes: self,
             index: 0,
+            count: 0,
         }
     }
 }
 
 pub struct AttributesIntoIterator<'a> {
-    attributes: &'a Attributes,
-    index: usize,
+    pub(crate) attributes: &'a Attributes,
+    pub(crate) index: usize,
+    pub(crate) count: usize,
 }
 
 impl<'a> Iterator for AttributesIntoIterator<'a> {
@@ -79,7 +81,28 @@ impl<'a> Iterator for AttributesIntoIterator<'a> {
         if result.is_none() {
             return self.next();
         }
+        self.count += 1;
         result
+    }
+}
+
+impl<'a> ExactSizeIterator for AttributesIntoIterator<'a> {
+    fn len(&self) -> usize {
+        let num =
+            3 + if self.attributes.datacontenttype.is_some() {
+                1
+            } else {
+                0
+            } + if self.attributes.dataschema.is_some() {
+                1
+            } else {
+                0
+            } + if self.attributes.subject.is_some() {
+                1
+            } else {
+                0
+            } + if self.attributes.time.is_some() { 1 } else { 0 };
+        num - self.count
     }
 }
 
