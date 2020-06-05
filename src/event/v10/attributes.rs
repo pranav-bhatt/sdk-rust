@@ -3,6 +3,7 @@ use crate::event::attributes::{
 };
 use crate::event::{AttributesReader, AttributesV03, AttributesWriter, SpecVersion};
 use chrono::{DateTime, Utc};
+use core::fmt::Debug;
 use url::Url;
 use uuid::Uuid;
 
@@ -42,6 +43,7 @@ impl<'a> IntoIterator for &'a Attributes {
     }
 }
 
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub struct AttributesIntoIterator<'a> {
     pub(crate) attributes: &'a Attributes,
     pub(crate) index: usize,
